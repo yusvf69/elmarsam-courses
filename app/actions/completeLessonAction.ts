@@ -13,7 +13,7 @@ export async function completeLessonAction(lessonId: string, clerkId: string) {
     });
     console.log("completeLessonAction result:", result);
 
-    const lesson = await sanityFetch<{ data: { module: { course: { _id: string } } } }>({
+    const lesson = await sanityFetch({
       query: `*[_type == "lesson" && _id == $lessonId][0]{"module": module->{"course": course->{_id}}}`,
       params: { lessonId },
     });
