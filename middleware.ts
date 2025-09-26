@@ -1,6 +1,9 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
+  const sessionId = req.cookies.get('__session')?.value;
+  console.log("Middleware - Session Cookie:", sessionId);
+
   // Skip authentication for stream API
   if (req.nextUrl.pathname.startsWith('/api/stream')) {
     return;
