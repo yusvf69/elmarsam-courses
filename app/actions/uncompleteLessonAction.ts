@@ -16,10 +16,11 @@ export async function uncompleteLessonAction(
     });
     console.log("uncompleteLessonAction uncompleteLessonById called");
 
-    const lesson = await sanityFetch<{ module: { course: { _id: string } } }>({
+    const lesson = (await sanityFetch({
       query: `*[_type == "lesson" && _id == $lessonId][0]{"module": module->{"course": course->{_id}}}`,
       params: { lessonId },
-    });
+    })) as { data?: { module?: { course?: { _id: string } } } };
+
     console.log("uncompleteLessonAction lesson.data:", lesson.data);
 
     if (lesson.data?.module?.course?._id) {
