@@ -4,6 +4,8 @@ import { getLessonById } from "@/sanity/lib/lessons/getLessonById";
 import { PortableText } from "@portabletext/react";
 import { LessonCompleteButton } from "@/components/LessonCompleteButton";
 import { VideoPlayerWrapper } from "@/components/VideoPlayerWrapper";
+import Quiz from "@/components/Quiz";
+import { checkQuizCompletionAction } from "@/app/actions/checkQuizCompletionAction";
 
 interface LessonPageProps {
   params: Promise<{
@@ -20,6 +22,27 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   if (!lesson) {
     return redirect(`/dashboard/courses/${courseId}`);
+  }
+
+
+  const quiz = lesson.quiz;
+
+  const quizCompleted = await checkQuizCompletionAction(lessonId, user!.id);
+
+  if (!quizCompleted && quiz) {
+    return (
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto pt-12 pb-20 px-4">
+            <h1 className="text-2xl font-bold mb-4">{lesson.title}</h1>
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Quiz</h2>
+              <Quiz quiz={quiz} lessonId={lesson._id} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

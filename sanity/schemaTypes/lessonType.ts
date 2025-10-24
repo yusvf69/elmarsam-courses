@@ -74,5 +74,19 @@ export const lessonType = defineType({
       type: "array",
       of: [{ type: "block" }],
     }),
+    defineField({
+      name: "quiz",
+      title: "Quiz",
+      type: "reference",
+      to: [{ type: "quiz" }],
+    }),
+    defineField({
+      name: "showQuizAfterLesson",
+      title: "Show Quiz After Lesson",
+      type: "boolean",
+      description:
+        "Check this box if you want to show the quiz after this lesson.",
+      initialValue: false,
+    }),
   ],
 });

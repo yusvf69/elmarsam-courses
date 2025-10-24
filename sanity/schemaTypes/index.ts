@@ -8,6 +8,9 @@ import { enrollmentType } from './enrollmentType'
 import { categoryType } from './categoryType'
 import { lessonCompletionType } from './lessonCompletionType'
 
+import { quizType } from './quizType'
+import { quizResultType } from './quizResultType'
+
 // Export all types for use in other files
 export {
   courseType,
@@ -18,8 +21,9 @@ export {
   enrollmentType,
   categoryType,
   lessonCompletionType,
+  quizType,
+  quizResultType,
 }
-
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     courseType,
@@ -30,5 +34,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     enrollmentType,
     categoryType,
     lessonCompletionType,
+    quizType,
+    quizResultType,
   ],
 }

@@ -4,6 +4,14 @@ import { uncompleteLessonById } from "@/sanity/lib/lessons/uncompleteLessonById"
 import { sanityFetch } from "@/sanity/lib/live";
 import { revalidateTag } from "next/cache";
 
+type LessonQueryResult = {
+  module?: {
+    course?: {
+      _id: string;
+    };
+  };
+};
+
 export async function uncompleteLessonAction(
   lessonId: string,
   clerkId: string,
@@ -16,16 +24,24 @@ export async function uncompleteLessonAction(
     });
     console.log("uncompleteLessonAction uncompleteLessonById called");
 
-    const lesson = (await sanityFetch({
+    const raw = await sanityFetch({
       query: `*[_type == "lesson" && _id == $lessonId][0]{"module": module->{"course": course->{_id}}}`,
       params: { lessonId },
-    })) as { data?: { module?: { course?: { _id: string } } } };
+    });
 
-    console.log("uncompleteLessonAction lesson.data:", lesson.data);
+    // Normalize possible response shapes:
+    // - Some helpers return the result directly: { module: { ... } }
+    // - Others return { data: { module: { ... } } }
+    const lesson = (raw && typeof raw === "object" && "data" in (raw as any))
+      ? (raw as any).data as LessonQueryResult | null
+      : (raw as LessonQueryResult | null);
 
-    if (lesson.data?.module?.course?._id) {
-      revalidateTag(`course-progress:${lesson.data.module.course._id}`);
-      revalidateTag(`course:${lesson.data.module.course._id}`);
+    console.log("uncompleteLessonAction lesson:", lesson);
+
+    const courseId = lesson?.module?.course?._id;
+    if (courseId) {
+      revalidateTag(`course-progress:${courseId}`);
+      revalidateTag(`course:${courseId}`);
     }
 
     return { success: true };

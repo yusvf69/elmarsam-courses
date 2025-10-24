@@ -4,4 +4,9 @@ import type {StructureResolver} from 'sanity/structure'
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
-    .items(S.documentTypeListItems())
+    .items([
+      ...S.documentTypeListItems(),
+      S.listItem()
+        .title('Quizzes')
+        .child(S.component().title('Quizzes').component(require('next/dynamic').default(async () => (await import('../app/(admin)/studio/quizzes')).default, { ssr: false }))),
+    ])
